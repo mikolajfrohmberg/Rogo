@@ -1,0 +1,10 @@
+C:\Users\adudz\source\repos\plansza1\plansza1\bin\Debug\plansza1.exe.config
+C:\Users\adudz\source\repos\plansza1\plansza1\bin\Debug\plansza1.exe
+C:\Users\adudz\source\repos\plansza1\plansza1\bin\Debug\plansza1.pdb
+C:\Users\adudz\source\repos\plansza1\plansza1\obj\Debug\plansza1.csprojAssemblyReference.cache
+C:\Users\adudz\source\repos\plansza1\plansza1\obj\Debug\plansza1.Form1.resources
+C:\Users\adudz\source\repos\plansza1\plansza1\obj\Debug\plansza1.Properties.Resources.resources
+C:\Users\adudz\source\repos\plansza1\plansza1\obj\Debug\plansza1.csproj.GenerateResource.cache
+C:\Users\adudz\source\repos\plansza1\plansza1\obj\Debug\plansza1.csproj.CoreCompileInputs.cache
+C:\Users\adudz\source\repos\plansza1\plansza1\obj\Debug\plansza1.exe
+C:\Users\adudz\source\repos\plansza1\plansza1\obj\Debug\plansza1.pdb
