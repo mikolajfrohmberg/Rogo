@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,17 +15,38 @@ namespace plansza1
     public partial class Form1 : Form
     {
         List<List<int>> listArrays = new List<List<int>>();
-        void Funkcja()
+        int nRows = 0;
+        int nColumns = 0;
+        bool Funkcja()
         {
-            System.IO.StreamReader myFile =
-              new System.IO.StreamReader("C:\\Users\\adudz\\Desktop\\6semestr\\SI\\kod\\tabela.txt");
-            string myString = myFile.ReadToEnd();
+            var fileContent = string.Empty; // Zawartość pliku
+            var filePath = "plansza.txt"; // Ścieżka do pliku
 
-            myFile.Close();
+            try
+            {   // Otwarcie pliku za pomoca StreamReadera
+                using (StreamReader sr = new StreamReader(filePath))
+                {
+                    // Wczytanie zawartości pliku
+                    fileContent = sr.ReadToEnd();
+                }
+            }
+            catch (IOException e) // Nie można otworzyć pliku
+            {
+                MessageBox.Show("Bląd wczytywania pliku");
+                return false;
+            }
 
             char rc = (char)10;
-            String[] listLines = myString.Split(rc);
-            
+            // Linie w pliku
+            String[] listLines = fileContent.Split(rc);
+
+            if (listLines.Length == 0) // Jeżeli brak pliku/plik był pusty...
+            {
+                MessageBox.Show("Bląd wczytywania pliku");
+                return false;
+            }
+                
+
             for (int i = 0; i < listLines.Length; i++)
             {
                 List<int> array = new List<int>();
@@ -38,17 +60,25 @@ namespace plansza1
                 }
                 listArrays.Add(array);
             }
+            // Ustawienie zmiennych zawierających ilości kolumn i rzędów
+            nRows = listArrays.Count;
+            nColumns = listArrays[0].Count;
+
+            // Założenie -> ilość kolumn i wierszy > 3 && < 9
+            if (nColumns <= 3 || nColumns >= 9 || nRows <= 3 || nRows >= 9) // Jeżeli założenie nie zostało spełnione...
+                return false;
+
+            return true;
         }
 
         public Form1()
         {
-            InitializeComponent();
-            Funkcja();
-        }
-
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
+            if (Funkcja() == false)
+            {
+                //Application.Exit();
+                return;
+            } 
+            InitializeComponent(nRows, nColumns);
         }
 
 
@@ -61,9 +91,12 @@ namespace plansza1
                 e.Graphics.FillRectangle(Brushes.White, e.CellBounds);
                 if (listArrays[e.Row][e.Column] !=0)
                 {
-                    using (Font font1 = new Font("Times New Roman", 24, FontStyle.Bold, GraphicsUnit.Pixel))
+                    using (Font font1 = new Font("Times New Roman", 32, FontStyle.Bold, GraphicsUnit.Pixel))
                     {
-                        e.Graphics.DrawString(listArrays[e.Row][e.Column].ToString(), font1, Brushes.Black, e.CellBounds);
+                        StringFormat sf = new StringFormat();
+                        sf.LineAlignment = StringAlignment.Center;
+                        sf.Alignment = StringAlignment.Center;
+                        e.Graphics.DrawString(listArrays[e.Row][e.Column].ToString(), font1, Brushes.Black, e.CellBounds, sf);
                     }
                 }
             }
