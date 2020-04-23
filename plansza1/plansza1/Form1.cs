@@ -149,17 +149,11 @@ namespace plansza1
             return l;
         }
 
-
-
-        private void flowLayoutPanel1_Resize(object sender, EventArgs e)
-        {
-
-        }
-
         private void Form1_Resize_1(object sender, EventArgs e)
         {
-            flowLayoutPanel1.Width = Convert.ToInt32(this.Width * 0.9);
-            flowLayoutPanel1.Height = Convert.ToInt32(this.Height * 0.9);
+            flowLayoutPanel1.Width = Convert.ToInt32(this.Width - 20);
+            flowLayoutPanel1.Height = Convert.ToInt32(this.Height - 50);
+            // Poszerzanie kafelków
         }
     }
 }
