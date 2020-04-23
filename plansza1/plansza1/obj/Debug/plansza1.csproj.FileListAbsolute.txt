@@ -18,3 +18,13 @@ E:\projekty_github\rogo\Rogo\plansza1\plansza1\obj\Debug\plansza1.csproj.Generat
 E:\projekty_github\rogo\Rogo\plansza1\plansza1\obj\Debug\plansza1.csproj.CoreCompileInputs.cache
 E:\projekty_github\rogo\Rogo\plansza1\plansza1\obj\Debug\plansza1.exe
 E:\projekty_github\rogo\Rogo\plansza1\plansza1\obj\Debug\plansza1.pdb
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\bin\Debug\plansza1.exe.config
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\bin\Debug\plansza1.exe
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\bin\Debug\plansza1.pdb
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\obj\Debug\plansza1.csprojAssemblyReference.cache
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\obj\Debug\plansza1.Form1.resources
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\obj\Debug\plansza1.Properties.Resources.resources
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\obj\Debug\plansza1.csproj.GenerateResource.cache
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\obj\Debug\plansza1.csproj.CoreCompileInputs.cache
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\obj\Debug\plansza1.exe
+C:\Users\adudz\Desktop\Rogo\plansza1\plansza1\obj\Debug\plansza1.pdb

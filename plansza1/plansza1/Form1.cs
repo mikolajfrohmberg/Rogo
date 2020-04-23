@@ -8,7 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System;
+using System.Threading;
 namespace plansza1
 {
 
@@ -70,7 +71,7 @@ namespace plansza1
 
             return true;
         }
-
+        //--------------------
         public Form1()
         {
             if (Funkcja() == false)
@@ -79,28 +80,86 @@ namespace plansza1
                 return;
             } 
             InitializeComponent(nRows, nColumns);
+            //Thread.Sleep(2000);
+
         }
 
-
-        private void tableLayoutPanel1_CellPaint_1(object sender, TableLayoutCellPaintEventArgs e)
+        private void Form1_Load_1(object sender, EventArgs e)
         {
-            if(listArrays[e.Row][e.Column] == -1)
+            int startposition = 100;
+            int endposition = 10;
+            for(int i=0; i< listArrays.Count; i++)
+            {
+                for (int j = 0; j < listArrays[0].Count; j++)
+                {
+                    Label l = addlabel(i, j, startposition, endposition);
+                    flowLayoutPanel1.Controls.Add(l);
+                    endposition += 100;
+                    l.Click += new System.EventHandler(this.labelClick);
+                }
+                
+            }
+        }
+
+        void labelClick(object sender, EventArgs e)
+        {
+            Label currentlable = (Label)sender;
+            MessageBox.Show(currentlable.Name);
+        }
+
+        Label addlabel(int i, int j, int start, int end)
+        {
+            Label l = new Label();
+            l.Name = "label" + i.ToString();
+            //l.Text = "label" + i.ToString();
+            /*if(listArrays[e.Row][e.Column] == -1)
                 e.Graphics.FillRectangle(Brushes.Black, e.CellBounds);
             else
             {
                 e.Graphics.FillRectangle(Brushes.White, e.CellBounds);
                 if (listArrays[e.Row][e.Column] !=0)
                 {
-                    using (Font font1 = new Font("Times New Roman", 32, FontStyle.Bold, GraphicsUnit.Pixel))
+                    using (Font font1 = new Font("Times New Roman", 24, FontStyle.Bold, GraphicsUnit.Pixel))
                     {
-                        StringFormat sf = new StringFormat();
-                        sf.LineAlignment = StringAlignment.Center;
-                        sf.Alignment = StringAlignment.Center;
-                        e.Graphics.DrawString(listArrays[e.Row][e.Column].ToString(), font1, Brushes.Black, e.CellBounds, sf);
+                        e.Graphics.DrawString(listArrays[e.Row][e.Column].ToString(), font1, Brushes.Black, e.CellBounds);
                     }
                 }
+            }*/
+            if (listArrays[i][j]==-1)
+            {//czarny
+                l.BackColor = Color.Black;
             }
-                
+            else
+            {
+                l.BackColor = Color.White;
+                if (listArrays[i][j] !=0)
+                {
+                    l.Text = listArrays[i][j].ToString();
+                }
+            }
+            l.ForeColor = Color.Black;
+            
+            l.Font = new Font("Serif", 24, FontStyle.Bold);
+            l.Width = 80;
+            l.Height = 80;
+            l.Location = new Point(start, end);
+            l.TextAlign = ContentAlignment.MiddleCenter;
+            l.Margin = new Padding(2);
+
+            return l;
+        }
+
+
+
+        private void flowLayoutPanel1_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Resize_1(object sender, EventArgs e)
+        {
+            flowLayoutPanel1.Width = Convert.ToInt32(this.Width * 0.9);
+            flowLayoutPanel1.Height = Convert.ToInt32(this.Height * 0.9);
         }
     }
 }
