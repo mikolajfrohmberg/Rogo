@@ -93,7 +93,7 @@ namespace plansza1
                 for (int j = 0; j < listArrays[0].Count; j++)
                 {
                     Label l = addlabel(i, j, startposition, endposition);
-                    flowLayoutPanel1.Controls.Add(l);
+                    tableLayoutPanel1.Controls.Add(l, i, j);
                     endposition += 100;
                     l.Click += new System.EventHandler(this.labelClick);
                 }
@@ -111,20 +111,6 @@ namespace plansza1
         {
             Label l = new Label();
             l.Name = "label" + i.ToString();
-            //l.Text = "label" + i.ToString();
-            /*if(listArrays[e.Row][e.Column] == -1)
-                e.Graphics.FillRectangle(Brushes.Black, e.CellBounds);
-            else
-            {
-                e.Graphics.FillRectangle(Brushes.White, e.CellBounds);
-                if (listArrays[e.Row][e.Column] !=0)
-                {
-                    using (Font font1 = new Font("Times New Roman", 24, FontStyle.Bold, GraphicsUnit.Pixel))
-                    {
-                        e.Graphics.DrawString(listArrays[e.Row][e.Column].ToString(), font1, Brushes.Black, e.CellBounds);
-                    }
-                }
-            }*/
             if (listArrays[i][j]==-1)
             {//czarny
                 l.BackColor = Color.Black;

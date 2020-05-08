@@ -28,24 +28,32 @@
         /// </summary>
         private void InitializeComponent(int nRows, int nColumns)
         {
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.SuspendLayout();
             // 
-            // flowLayoutPanel1
+            // tableLayoutPanel1
             // 
-            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(495, 439);
-            this.flowLayoutPanel1.TabIndex = 0;
+            this.tableLayoutPanel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.tableLayoutPanel1.ColumnCount = nRows;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
+            this.tableLayoutPanel1.AutoSize = true;
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = nColumns;
+            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddRows;
+            this.Controls.Add(tableLayoutPanel1);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(200, 100);
+            this.tableLayoutPanel1.TabIndex = 0;
             // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(500, 449);
-            this.Controls.Add(this.flowLayoutPanel1);
-            this.Name = "Form1";
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 650);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Load += new System.EventHandler(this.Form1_Load_1);
-            this.Resize += new System.EventHandler(this.Form1_Resize_1);
+            this.Name = "Form1";
+            this.Text = "Form1";
             this.ResumeLayout(false);
 
         }
