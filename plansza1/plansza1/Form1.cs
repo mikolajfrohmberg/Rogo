@@ -21,6 +21,91 @@ namespace plansza1
         List<Tuple<int, int>> listClick = new List<Tuple<int, int>>(); // Przechowuje klikniete przez gracza pola w sesji [i,j]
         int nRows = 0;
         int nColumns = 0;
+
+        public void file_changer(string fileName, int rows, int cols, int max_steps, string problem_array)
+        {
+            // Read the file and display it line by line.  
+            Regex regex1 = new Regex(@"(int: rows(=\d+)?;)");
+            Regex regex2 = new Regex(@"(int: cols(=\d+)?;)");
+            Regex regex3 = new Regex(@"(int: max_steps(=\d+)?;)");
+            Regex regex4 = new Regex(@"(array\[1..rows, 1..cols\] of int: problem(=.+)?;)");
+
+            string[] arrLine = File.ReadAllLines(fileName);
+            int line_count = 0;
+            foreach (string line in arrLine)
+            {
+                if (regex1.IsMatch(line))
+                    arrLine[line_count] = "int: rows=" + rows.ToString() + ";";
+                if (regex2.IsMatch(line))
+                    arrLine[line_count] = "int: cols=" + cols.ToString() + ";";
+                if (regex3.IsMatch(line))
+                    arrLine[line_count] = "int: max_steps=" + max_steps.ToString() + ";";
+                if (regex4.IsMatch(line))
+                    arrLine[line_count] = "array[1..rows, 1..cols] of int: problem=" + problem_array + ";";
+
+                line_count++;
+            }
+
+            File.WriteAllLines(fileName, arrLine);
+
+        }
+
+
+        public void cmd_exec()
+        {
+            string strCmdText = "/K minizinc --time-limit 3000 rogo_test.mzn > output.txt";
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = strCmdText;
+            process.StartInfo = startInfo;
+            process.Start();
+            Console.WriteLine("cmd exec()");
+        }
+
+
+        //public void read_cmd_output(ref int sum_points, ref List<int> x_array)
+        public void read_cmd_output(ref int sum_points, ref int[] x_array, ref int[] y_array, ref int[] points_array)
+        {
+            int[] x_array_1 = new int[] { };
+            string fileName = "output.txt";
+            string x_table_string = "", y_table_string = "", points_table_string = "", sum_points_string = "";
+            string[] arrLine = File.ReadAllLines(fileName);
+            int line_count = 0;
+            Regex regex1 = new Regex(@"(^x.+(\])$)");
+            Regex regex2 = new Regex(@"(^y.+(\])$)");
+            Regex regex3 = new Regex(@"(^(points).+(\])$)");
+            Regex regex4 = new Regex(@"(sum_points: \d+)");
+
+            Regex r_table = new Regex(@"((\d(, )?)+)");
+            Regex r_number = new Regex(@"(\d+)");
+            foreach (string line in arrLine)
+            {
+                if (regex1.IsMatch(line))
+                    x_table_string = line;
+                if (regex2.IsMatch(line))
+                    y_table_string = line;
+                if (regex3.IsMatch(line))
+                    points_table_string = line;
+                if (regex4.IsMatch(line))
+                    sum_points_string = line;
+            }
+            x_table_string = r_table.Match(x_table_string).Value;
+            y_table_string = r_table.Match(y_table_string).Value;
+            points_table_string = r_table.Match(points_table_string).Value;
+            sum_points_string = r_number.Match(sum_points_string).Value;
+
+            sum_points = Int32.Parse(sum_points_string);
+            x_table_string = x_table_string.Replace(" ", "");
+            y_table_string = y_table_string.Replace(" ", "");
+            points_table_string = points_table_string.Replace(" ", "");
+
+            x_array = x_table_string.Split(',').Select(n => Convert.ToInt32(n)).ToArray();
+            y_array = y_table_string.Split(',').Select(n => Convert.ToInt32(n)).ToArray();
+            points_array = points_table_string.Split(',').Select(n => Convert.ToInt32(n)).ToArray();
+        }
+
         bool Funkcja()
         {
             var fileContent = string.Empty; // Zawartość pliku
@@ -82,7 +167,20 @@ namespace plansza1
                 //Application.Exit();
                 return;
             }
+            
             InitializeComponent(nRows, nColumns);
+            int sum_points = 0;
+            int rows = 9;
+            int cols = 7;
+            int max_steps = 20;
+            int[] x_array = new int[] { };
+            int[] y_array = new int[] { };
+            int[] points_array = new int[] { };
+            string problem_array = "[|5,0,0,5,0,0,4,|0,8,-1,0,0,-1,0,|0,0,2,0,0,8,0,|0,-1,0,4,0,0,0,|4,0,2,0,2,0,5,|0,0,0,5,0,-1,0,|0,8,0,0,8,0,0,|0,-1,0,0,-1,4,0,|5,0,0,4,0,0,2|]";
+            file_changer("rogo_test.mzn", rows, cols, max_steps, problem_array);
+            cmd_exec();
+            read_cmd_output(ref sum_points, ref x_array, ref y_array, ref points_array);
+            Console.WriteLine("Sum points: " + sum_points);
             //Thread.Sleep(2000);
 
         }
