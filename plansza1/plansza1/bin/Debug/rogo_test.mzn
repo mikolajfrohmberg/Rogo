@@ -24,10 +24,10 @@ int: B = -1; % black cells
 int: max_val = max([problem[i,j] | i in 1..rows, j in 1..cols]);
 
 % define the problem
-int: rows=9;
-int: cols=7;
-int: max_steps=20;
-array[1..rows, 1..cols] of int: problem=[|5,0,0,5,0,0,4,|0,8,-1,0,0,-1,0,|0,0,2,0,0,8,0,|0,-1,0,4,0,0,0,|4,0,2,0,2,0,5,|0,0,0,5,0,-1,0,|0,8,0,0,8,0,0,|0,-1,0,0,-1,4,0,|5,0,0,4,0,0,2|];
+int: rows=5;
+int: cols=6;
+int: max_steps=6;
+array[1..rows, 1..cols] of int: problem=[|0,2,1,-1,0,1,|1,-1,0,3,0,1,|0,1,0,2,0,0,|2,0,0,2,1,0,|0,1,2,-1,0,0,|];
 
 % the coordinates in the path
 array[1..max_steps] of var 1..rows: x;
