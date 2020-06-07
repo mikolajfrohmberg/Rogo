@@ -1,31 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System;
 using System.Threading;
 using System.Text.RegularExpressions;
 
 namespace plansza1
 {
-
     public partial class Form1 : Form
     {
         int player_points = 0, player_steps = 0;
+        int max_points = 0;
+        int[] x_array = new int[] { };
+        int[] y_array = new int[] { };
+        int[] points_array = new int[] { };
+
+        int sum_points = 0;
+        int max_steps = 10;
+        bool is_solution_displayed = false;
         List<List<int>> listArrays = new List<List<int>>();
         List<Tuple<int, int>> listClick = new List<Tuple<int, int>>(); // Przechowuje klikniete przez gracza pola w sesji [i,j]
         int nRows = 0;
         int nColumns = 0;
+        string source_file = "7x9.txt"; // plik z planszą
 
-        public void file_changer(string fileName, int rows, int cols, int max_steps, string problem_array)//Zmienia plik, ktory wywoluje Minizinc
+        public void file_changer(string fileName, int nRows, int nColumns, int max_steps, string problem_array)//Zmienia plik, ktory wywoluje Minizinc
         {
-            // Read the file and display it line by line.  
             Regex regex1 = new Regex(@"(int: rows(=\d+)?;)");
             Regex regex2 = new Regex(@"(int: cols(=\d+)?;)");
             Regex regex3 = new Regex(@"(int: max_steps(=\d+)?;)");
@@ -36,9 +39,9 @@ namespace plansza1
             foreach (string line in arrLine)
             {
                 if (regex1.IsMatch(line))
-                    arrLine[line_count] = "int: rows=" + rows.ToString() + ";";
+                    arrLine[line_count] = "int: rows=" + nRows.ToString() + ";";
                 if (regex2.IsMatch(line))
-                    arrLine[line_count] = "int: cols=" + cols.ToString() + ";";
+                    arrLine[line_count] = "int: cols=" + nColumns.ToString() + ";";
                 if (regex3.IsMatch(line))
                     arrLine[line_count] = "int: max_steps=" + max_steps.ToString() + ";";
                 if (regex4.IsMatch(line))
@@ -48,13 +51,16 @@ namespace plansza1
             }
 
             File.WriteAllLines(fileName, arrLine);
-
+            Console.WriteLine("After file_changer");
         }
 
 
         public void cmd_exec()
         {
-            string strCmdText = "/K minizinc --time-limit 3000 rogo_test.mzn > output.txt";
+            Console.WriteLine(nRows);
+            int limit = nRows * nColumns * max_steps * 10;
+            Console.WriteLine(limit);
+            string strCmdText = "/K minizinc --time-limit "+limit+" rogo.mzn > output.txt";
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
@@ -62,74 +68,17 @@ namespace plansza1
             startInfo.Arguments = strCmdText;
             process.StartInfo = startInfo;
             process.Start();
-            Console.WriteLine("cmd exec()");
+            Thread.Sleep(limit+500);
+            Console.WriteLine("process_exited");
         }
 
-
-        List<List<int>> set_listArray(int[] x_array, int[] y_array, int[] points_array)//moze zostac uzyta do zaznaczenia sciezki oraz planszy
-        {
-            int x_max = x_array.Max();  int y_max = y_array.Max();
-            int[][] list_arr = new int[x_array.Max()][];
-            for(int i=0; i<x_max; i++)
-                list_arr[i] = new int[y_max];
-
-
-            for(int i=0; i<x_array.Length; i++)
-            {
-                list_arr[x_array[i]-1][y_array[i]-1] = points_array[i];
-                Console.WriteLine("x[" + x_array[i] + "]" + " y[" + y_array[i] + "]=" + " points[i]=" + list_arr[x_array[i]-1][y_array[i]-1]);
-            }
-            List<List<int>> lst = list_arr.Select(a => a.ToList()).ToList();
-            return lst; 
-        }
-
-
-        void draw_path(int[] x_array, int[] y_array, ref TableLayoutPanel t)
-        {//x_array i y_array to tablice przechowujące punkty (x,y) - mają ten sam rozmiar
-            Console.WriteLine("draw_path()");
-            int startposition = 100;
-            int endposition = 10;
-            string label_name = "";
-            //tableLayoutPanel1.Controls.Clear();
-            
-            for (int i = 0; i < x_array.Length; i++)
-            {
-                label_name = "j:" + y_array[i] + "i:" + x_array[i];
-                for (int x = 0; x < listArrays.Count; x++)
-                {
-                    for (int y = 0; y < listArrays[0].Count; y++)
-                    {
-                        if((x==x_array[i])&&(y==y_array[i]))
-                        {//Console.WriteLine("x = " + x + " y = " + y + ", x_array[i] = " + x_array[i] + " y_array[j] = " + y_array[i]);
-                            foreach (Control ctrl in tableLayoutPanel1.Controls)
-                            {
-                                string ctrlname = ctrl.Name;
-                                Console.WriteLine(ctrlname);
-                                if (ctrlname == label_name)
-                                    ctrl.BackColor = Color.Green;
-                            }
-                        }
-                            
-                    }
-
-                }
-                
-                    //Label l = (Label)tableLayoutPanel1.Controls[label_name];
-                    //l.BackColor = Color.Green;
-            }
-            Console.WriteLine("draw_path()");
-            //c.BackColor = System.Drawing.Color.Green;
-            //currentlable.BackColor = 
-
-        }
-        //public void read_cmd_output(ref int sum_points, ref List<int> x_array)
+        
         public void read_cmd_output(ref int sum_points, ref int[] x_array, ref int[] y_array, ref int[] points_array)
         {
             int[] x_array_1 = new int[] { };
             string fileName = "output.txt";
             string x_table_string = "", y_table_string = "", points_table_string = "", sum_points_string = "";
             string[] arrLine = File.ReadAllLines(fileName);
-            int line_count = 0;
             Regex regex1 = new Regex(@"(^x.+(\])$)");
             Regex regex2 = new Regex(@"(^y.+(\])$)");
             Regex regex3 = new Regex(@"(^(points).+(\])$)");
@@ -146,7 +95,11 @@ namespace plansza1
                 if (regex3.IsMatch(line))
                     points_table_string = line;
                 if (regex4.IsMatch(line))
+                {
                     sum_points_string = line;
+                    Console.WriteLine(sum_points_string);
+                }
+                    
             }
             x_table_string = r_table.Match(x_table_string).Value;
             y_table_string = r_table.Match(y_table_string).Value;
@@ -162,60 +115,49 @@ namespace plansza1
             y_array = y_table_string.Split(',').Select(n => Convert.ToInt32(n)).ToArray();
             points_array = points_table_string.Split(',').Select(n => Convert.ToInt32(n)).ToArray();
         }
-
-        bool Funkcja()
+        void draw_board()
         {
-            var fileContent = string.Empty; // Zawartość pliku
-            var filePath = "plansza.txt"; // Ścieżka do pliku
+            int startposition = 100;
+            int endposition = 10;
 
-            try
-            {   // Otwarcie pliku za pomoca StreamReadera
-                using (StreamReader sr = new StreamReader(filePath))
+            for (int i = 0; i < listArrays.Count; i++)
+            {
+                for (int j = 0; j < listArrays[0].Count; j++)
                 {
-                    // Wczytanie zawartości pliku
-                    fileContent = sr.ReadToEnd();
+                    Label l = addlabel(j, i, startposition, endposition, false);
+                    tableLayoutPanel1.Controls.Add(l, j, i);
+                    endposition += 100;
+                    l.Click += new System.EventHandler(this.labelClick);
                 }
+
             }
-            catch (IOException e) // Nie można otworzyć pliku
+        }
+
+        void clear_board()
+        {
+            for (int x = 0; x < listArrays.Count; x++)
             {
-                MessageBox.Show("Bląd wczytywania pliku");
-                return false;
-            }
-
-            char rc = (char)10;
-            // Linie w pliku
-            String[] listLines = fileContent.Split(rc);
-
-            if (listLines.Length == 0) // Jeżeli brak pliku/plik był pusty...
-            {
-                MessageBox.Show("Bląd wczytywania pliku");
-                return false;
-            }
-
-
-            for (int i = 0; i < listLines.Length; i++)
-            {
-                List<int> array = new List<int>();
-                String[] listInts = listLines[i].Split(' ');
-                for (int j = 0; j < listInts.Length; j++)
+                for (int y = 0; y < listArrays[0].Count; y++)
                 {
-                    if (listInts[j] != "\r")
+                    Control control = tableLayoutPanel1.GetControlFromPosition(y, x);
+                    if (control != null)
                     {
-                        array.Add(Convert.ToInt32(listInts[j]));
+                        if(control.BackColor!=Color.Black)
+                        {
+                            control.BackColor = Color.White;
+                        }
                     }
                 }
-                listArrays.Add(array);
+
             }
-            // Ustawienie zmiennych zawierających ilości kolumn i rzędów
-            nRows = listArrays.Count;
-            nColumns = listArrays[0].Count;
+            player_points = 0;
+            player_steps = 0;
+            labelPoints1.Text = "0";
+            labelSteps1.Text = "0";
+            listClick.Clear();
 
-            // Założenie -> ilość kolumn i wierszy > 3 && < 9
-            if (nColumns <= 3 || nColumns >= 9 || nRows <= 3 || nRows >= 9) // Jeżeli założenie nie zostało spełnione...
-                return false;
-
-            return true;
         }
+
 
         List<List<int>> load_from_file(string fileName)
         {
@@ -259,6 +201,8 @@ namespace plansza1
                 }
                 list.Add(array);
             }
+            nRows = list.Count;
+            nColumns = list[0].Count;
             return list;
         }
 
@@ -279,68 +223,109 @@ namespace plansza1
         //--------------------
         public Form1()
         {
-            if (Funkcja() == false)
-            {
-                //Application.Exit();
-                return;
-            }
-
-            
-            int sum_points = 0;
-            int rows = 5;
-            int cols = 6;
-            int max_steps = 6;
-            int[] x_array = new int[] { };
-            int[] y_array = new int[] { };
-            int[] points_array = new int[] { };
-
-            //string problem_array = "[|5,0,0,5,0,0,4,|0,8,-1,0,0,-1,0,|0,0,2,0,0,8,0,|0,-1,0,4,0,0,0,|4,0,2,0,2,0,5,|0,0,0,5,0,-1,0,|0,8,0,0,8,0,0,|0,-1,0,0,-1,4,0,|5,0,0,4,0,0,2|]";
-            List<List<int>> list = load_from_file("plansza.txt");
-            string problem_string = convert_list_arr_to_string(list);
-
-            file_changer("rogo_test.mzn", rows, cols, max_steps, problem_string);
-            cmd_exec();
-            read_cmd_output(ref sum_points, ref x_array, ref y_array, ref points_array);
-            Console.WriteLine("Sum points: " + sum_points);
-            //listArrays = set_listArray(x_array, y_array, points_array);
+            listArrays = load_from_file(source_file);
 
             InitializeComponent(nRows, nColumns);
-            draw_path(x_array, y_array, ref tableLayoutPanel1);
-            foreach(Control l in tableLayoutPanel1.Controls)
-            {
-                Console.WriteLine(l.ToString());
-            }
-
-            
-            //Thread.Sleep(2000);
-
+            draw_board();
         }
 
         private void Form1_Load_1(object sender, EventArgs e)
         {
-            int startposition = 100;
-            int endposition = 10;
-            for (int i = 0; i < listArrays.Count; i++)
+            restartbutton.Click += new System.EventHandler(this.restart_Click);
+            backbutton.Click += new System.EventHandler(this.back_Click);
+            solutionbutton.Click += new System.EventHandler(this.solution_Click);
+            labelSteps1.Text = player_steps.ToString();
+            labelPoints1.Text = sum_points.ToString();
+            labelmax_points.Text = max_points.ToString();
+
+            boardBox.Items.Add("10x10");
+            boardBox.Items.Add("9x9");
+            boardBox.Items.Add("8x8");
+            boardBox.Items.Add("7x9");
+            boardBox.Items.Add("7x7");
+            boardBox.Items.Add("6x6");
+            boardBox.Items.Add("5x5");
+            boardBox.SelectedIndex = 3;
+
+            max_stepsBox.Items.Add("4");
+            max_stepsBox.Items.Add("6");
+            max_stepsBox.Items.Add("8");
+            max_stepsBox.Items.Add("10");
+            max_stepsBox.Items.Add("12");
+            max_stepsBox.Items.Add("14");
+            max_stepsBox.Items.Add("16");
+            max_stepsBox.Items.Add("18");
+            max_stepsBox.Items.Add("20");
+            max_stepsBox.SelectedIndex = 3;
+        }
+
+        void restart_Click(object sender, EventArgs e)
+        {
+            clear_board();
+        }
+        
+        void back_Click(object sender, EventArgs e)
+        {
+            back_move();
+        }
+
+        void ComboBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        void solution_Click(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+            this.Cursor = Cursors.WaitCursor;
+
+            clear_board();
+            List<List<int>> list = load_from_file(source_file);
+            string problem_string = convert_list_arr_to_string(list);
+            file_changer("rogo.mzn", nRows, nColumns, max_steps, problem_string);
+            cmd_exec();
+            read_cmd_output(ref sum_points, ref x_array, ref y_array, ref points_array);
+            draw_path(x_array, y_array, points_array);
+            is_solution_displayed = true;
+
+            this.Enabled = true;
+            this.Cursor = Cursors.Default;
+        }
+
+        void back_move()
+        {
+            if(player_steps>0)
             {
-                for (int j = 0; j < listArrays[0].Count; j++)
+                player_steps--;
+                labelSteps1.Text = player_steps.ToString();
+
+                //Console.WriteLine(listClick[listClick.Count-1].Item1 + " " + listClick[listClick.Count-1].Item2);
+                Control control = tableLayoutPanel1.GetControlFromPosition(listClick[listClick.Count-1].Item2, listClick[listClick.Count-1].Item1);
+                if (control != null)
                 {
-                    Label l = addlabel(i, j, startposition, endposition, false);
-                    tableLayoutPanel1.Controls.Add(l, i, j);
-                    endposition += 100;
-                    l.Click += new System.EventHandler(this.labelClick);
+                    control.BackColor = Color.White;
+                    player_points -= listArrays[listClick[listClick.Count - 1].Item1][listClick[listClick.Count - 1].Item2];
                 }
+                labelPoints1.Text = player_points.ToString();
+
+                listClick.RemoveAt(listClick.Count-1);
 
             }
         }
 
         void labelClick(object sender, EventArgs e)
         {
+            if (is_solution_displayed == true)
+            {
+                clear_board();
+                is_solution_displayed = false;
+            }
+                
             Label currentlable = (Label)sender;
             Regex regex = new Regex(@"\d+");
             MatchCollection matches = regex.Matches(currentlable.Name);
             int j = int.Parse(matches[0].Value);
             int i = int.Parse(matches[1].Value);
-
             if (listClick == null)
                 listClick.Add(Tuple.Create(j, i));
 
@@ -354,9 +339,9 @@ namespace plansza1
             }
 
 
-            if (listArrays[i][j] == -1)
+            if (listArrays[j][i] == -1)
             {
-                MessageBox.Show("Ruch niedozwolony!");
+                MessageBox.Show("Ruch niedozwolony! (-1)");
             }
             else
             {
@@ -366,37 +351,70 @@ namespace plansza1
                     {
                         if (listClick.ElementAt(size - 1).Item1 != t.Item1 && listClick.ElementAt(size - 1).Item2 != t.Item2) //ruch na skos
                         {
-                            MessageBox.Show("Ruch niedozwolony!");
+                            MessageBox.Show("Ruch niedozwolony! (na skos)");
                         }
                         else
                         {
                             if ((listClick.ElementAt(size - 1).Item1 - t.Item1 > 1 || listClick.ElementAt(size - 1).Item1 - t.Item1 < -1) || (listClick.ElementAt(size - 1).Item2 - t.Item2 > 1 || listClick.ElementAt(size - 1).Item2 - t.Item2 < -1))// mozna sprobowac skrocic pozniej
                             {// warunek na nie przeskakiwanie o wiecej niz 1 pole w wysokosci lub w bok
-                                MessageBox.Show("Ruch niedozwolony!");
-                                //Console.WriteLine("listClick: " + listClick.ElementAt(size - 1).Item1 + " " + listClick.ElementAt(size - 1).Item2);
-                                //Console.WriteLine("t: " + t.Item1 + " " + t.Item2);
+                                MessageBox.Show("Ruch niedozwolony! (wiecej niz 1 pole)");
                             }
                             else
                             {
                                 listClick.Add(Tuple.Create(j, i));
-                                player_points += listArrays[i][j];
+                                player_points += listArrays[j][i];
                                 labelPoints1.Text = player_points.ToString();
 
                                 player_steps++;
                                 labelSteps1.Text = player_steps.ToString();
-                                currentlable.BackColor = System.Drawing.Color.Green;
+
+                                Console.WriteLine(listClick.ElementAt(size).Item1 + " "+ listClick.ElementAt(size).Item2);
+                                if (player_steps == 1)
+                                    currentlable.BackColor = System.Drawing.Color.LightGreen;
+                                else
+                                {
+                                    if(player_steps>max_steps)
+                                        currentlable.BackColor = System.Drawing.Color.Red;
+                                    else
+                                    {
+                                        if (player_steps == max_steps)
+                                        {
+                                            //pole koncowe poziomo z polem startowym
+                                            bool valid_path = false;
+                                            Console.WriteLine("list Click(0): "+ listClick.ElementAt(0).Item1+"|"+ listClick.ElementAt(0).Item2);
+                                            Console.WriteLine("list Click(last): "+ listClick.ElementAt(size).Item1 + "|"+ listClick.ElementAt(size).Item2);
+                                            if ((listClick.ElementAt(0).Item1 == listClick.ElementAt(size).Item1) && (listClick.ElementAt(0).Item2 == (listClick.ElementAt(size).Item2 - 1)))
+                                                valid_path = true;
+                                            if ((listClick.ElementAt(0).Item1 == listClick.ElementAt(size).Item1) && (listClick.ElementAt(0).Item2 == (listClick.ElementAt(size).Item2 + 1)))
+                                                valid_path = true;
+
+                                            if ((listClick.ElementAt(0).Item2 == listClick.ElementAt(size).Item2) && (listClick.ElementAt(0).Item1 == (listClick.ElementAt(size).Item1 - 1)))
+                                                valid_path = true;
+                                            if ((listClick.ElementAt(0).Item2 == listClick.ElementAt(size).Item2) && (listClick.ElementAt(0).Item1 == (listClick.ElementAt(size).Item1 + 1)))
+                                                valid_path = true;
+
+                                            currentlable.BackColor = System.Drawing.Color.Green;
+                                            if (player_points > max_points && valid_path)
+                                                max_points = player_points;
+                                            labelmax_points.Text = max_points.ToString();
+                                        }
+                                        else
+                                            currentlable.BackColor = System.Drawing.Color.Green;
+                                    }     
+                                }
                             }
                         }
                     }
                     else
                     {
                         listClick.Add(Tuple.Create(j, i));
-                        player_points += listArrays[i][j];
+                        player_points += listArrays[j][i];
                         labelPoints1.Text = player_points.ToString();
 
                         player_steps++;
                         labelSteps1.Text = player_steps.ToString();
-                        currentlable.BackColor = System.Drawing.Color.Green;
+                        
+                        currentlable.BackColor = System.Drawing.Color.LightGreen;
                     }
                 }
                 else
@@ -407,6 +425,7 @@ namespace plansza1
 
         Label addlabel(int i, int j, int start, int end, bool path)
         {
+
             Label l = new Label();
             l.Name = "j:" + j.ToString() + "i:" + i.ToString();
             if(path)
@@ -415,29 +434,97 @@ namespace plansza1
             }
             else
             {
-                if (listArrays[i][j] == -1)
+                if (listArrays[j][i] == -1)
                 {//czarny
                     l.BackColor = Color.Black;
                 }
                 else
                 {
                     l.BackColor = Color.White;
-                    if (listArrays[i][j] != 0)
+                    if (listArrays[j][i] != 0)
                     {
-                        l.Text = listArrays[i][j].ToString();
+                        l.Text = listArrays[j][i].ToString();
                     }
                 }
             }
             l.ForeColor = Color.Black;
 
             l.Font = new Font("Serif", 24, FontStyle.Bold);
-            l.Width = 80;
-            l.Height = 80;
+            l.Width = 65;
+            l.Height = 65;
             l.Location = new Point(start, end);
             l.TextAlign = ContentAlignment.MiddleCenter;
             l.Margin = new Padding(2);
 
             return l;
+        }
+
+        void max_stepsBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            max_steps = Int32.Parse(max_stepsBox.SelectedItem.ToString());
+            max_points = 0;
+            labelmax_points.Text = max_points.ToString();
+        }
+
+        void boardBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string board_selected = boardBox.SelectedItem.ToString();
+            int digit1=0, digit2=0;
+            player_points = 0;
+            labelPoints1.Text = player_points.ToString();
+            if(board_selected[0] == '1')
+            {
+                digit1 = 10 + Int32.Parse(board_selected[1].ToString());
+                if (board_selected[3] == '1')
+                    digit2 = 10 + Int32.Parse(board_selected[4].ToString());
+            }
+            else
+            {
+                digit1 = Int32.Parse(board_selected[0].ToString());
+                digit2 = Int32.Parse(board_selected[2].ToString());
+            }
+            clear_board();
+
+            source_file = digit1.ToString()+"x"+digit2.ToString()+".txt";
+            tableLayoutPanel1.RowCount = digit1;
+            tableLayoutPanel1.ColumnCount = digit2;
+
+
+            listArrays = load_from_file(source_file);
+            while (tableLayoutPanel1.Controls.Count > 0)
+            {
+                tableLayoutPanel1.Controls[0].Dispose();
+            } 
+            draw_board();
+
+        }
+
+        void draw_path(int[] x_array, int[] y_array, int[] points_array)
+        {//x_array i y_array to tablice przechowujące punkty (x,y) - mają ten sam rozmiar
+            int startposition = 100;
+            int endposition = 10;
+            for (int i = 0; i < x_array.Length; i++)
+            {
+                for (int x = 0; x < listArrays.Count; x++)
+                {
+                    for (int y = 0; y < listArrays[0].Count; y++)
+                    {
+                        if ((x == x_array[i]-1) && (y == y_array[i]-1))
+                        {//Console.WriteLine("x = " + x + " y = " + y + ", x_array[i] = " + x_array[i] + " y_array[j] = " + y_array[i]);
+                            Control control = tableLayoutPanel1.GetControlFromPosition(y_array[i] - 1, x_array[i] - 1);
+                            if (control != null)
+                            {
+                                control.BackColor = Color.Green;
+                                player_points += points_array[i];
+                            }
+                        }
+
+                    }
+
+                }
+                labelPoints1.Text = player_points.ToString();
+                labelSteps1.Text = x_array.Length.ToString();
+            }
         }
 
         private void Form1_Resize_1(object sender, EventArgs e)
