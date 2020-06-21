@@ -1,3 +1,4 @@
+% 
 % Rogo problem in MiniZinc.
 % 
 % From Mike Trick:
@@ -26,7 +27,7 @@ int: max_val = max([problem[i,j] | i in 1..rows, j in 1..cols]);
 % define the problem
 int: rows=9;
 int: cols=7;
-int: max_steps=10;
+int: max_steps=16;
 array[1..rows, 1..cols] of int: problem=[|5,0,0,5,0,0,4,|0,8,-1,0,0,-1,0,|0,0,2,0,0,8,0,|0,-1,0,4,0,0,0,|4,0,2,0,2,0,5,|0,0,0,5,0,-1,0,|0,8,0,0,8,0,0,|0,-1,0,0,-1,4,0,|5,0,0,4,0,0,2,|];
 
 % the coordinates in the path

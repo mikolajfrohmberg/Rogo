@@ -57,10 +57,11 @@ namespace plansza1
 
         public void cmd_exec()
         {
-            Console.WriteLine(nRows);
+            //Console.WriteLine(nRows);
             int limit = nRows * nColumns * max_steps * 10;
             Console.WriteLine(limit);
-            string strCmdText = "/K minizinc --time-limit "+limit+" rogo.mzn > output.txt";
+            string solver = "--solver Chuffed";
+            string strCmdText = "/K minizinc "+solver+" --time-limit "+limit+" rogo.mzn > output.txt";
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
@@ -68,7 +69,7 @@ namespace plansza1
             startInfo.Arguments = strCmdText;
             process.StartInfo = startInfo;
             process.Start();
-            Thread.Sleep(limit+500);
+            Thread.Sleep(limit + 500);
             Console.WriteLine("process_exited");
         }
 
@@ -370,7 +371,9 @@ namespace plansza1
 
                                 Console.WriteLine(listClick.ElementAt(size).Item1 + " "+ listClick.ElementAt(size).Item2);
                                 if (player_steps == 1)
-                                    currentlable.BackColor = System.Drawing.Color.LightGreen;
+                                {
+                                    currentlable.BackColor = Color.FromArgb(0, 255, 0);
+                                }
                                 else
                                 {
                                     if(player_steps>max_steps)
@@ -393,13 +396,15 @@ namespace plansza1
                                             if ((listClick.ElementAt(0).Item2 == listClick.ElementAt(size).Item2) && (listClick.ElementAt(0).Item1 == (listClick.ElementAt(size).Item1 + 1)))
                                                 valid_path = true;
 
-                                            currentlable.BackColor = System.Drawing.Color.Green;
+                                            currentlable.BackColor = Color.FromArgb(0, 255 - player_steps * 10, 0);
                                             if (player_points > max_points && valid_path)
                                                 max_points = player_points;
                                             labelmax_points.Text = max_points.ToString();
                                         }
                                         else
-                                            currentlable.BackColor = System.Drawing.Color.Green;
+                                        {
+                                            currentlable.BackColor = Color.FromArgb(0, 255 - player_steps * 10, 0);
+                                        }    
                                     }     
                                 }
                             }
@@ -503,6 +508,7 @@ namespace plansza1
         {//x_array i y_array to tablice przechowujące punkty (x,y) - mają ten sam rozmiar
             int startposition = 100;
             int endposition = 10;
+            int counter=0;
             for (int i = 0; i < x_array.Length; i++)
             {
                 for (int x = 0; x < listArrays.Count; x++)
@@ -514,8 +520,10 @@ namespace plansza1
                             Control control = tableLayoutPanel1.GetControlFromPosition(y_array[i] - 1, x_array[i] - 1);
                             if (control != null)
                             {
-                                control.BackColor = Color.Green;
+                                //control.BackColor = Color.Green;
+                                control.BackColor = Color.FromArgb(0, 255 - counter * 10, 0);
                                 player_points += points_array[i];
+                                counter++;
                             }
                         }
 
