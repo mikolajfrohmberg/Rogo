@@ -51,13 +51,13 @@ namespace plansza1
             // label for name1
             this.labelName1 = new System.Windows.Forms.Label();
             this.labelName1.BackColor = System.Drawing.Color.Transparent;
-            this.labelName1.Location = new System.Drawing.Point(950, 60);
+            this.labelName1.Location = new System.Drawing.Point(800, 30);
             this.labelName1.Text = "Punkty";
             // label with Points
             // 
             this.labelPoints1 = new System.Windows.Forms.Label();
             this.labelPoints1.BackColor = System.Drawing.SystemColors.Window;
-            this.labelPoints1.Location = new System.Drawing.Point(950, 100);
+            this.labelPoints1.Location = new System.Drawing.Point(800, 60);
             this.labelPoints1.Width = 60;
             this.labelPoints1.Height = 60;
             this.labelPoints1.TextAlign = ContentAlignment.MiddleCenter;
@@ -66,12 +66,12 @@ namespace plansza1
             // label for name2
             this.labelName2 = new System.Windows.Forms.Label();
             this.labelName2.BackColor = System.Drawing.Color.Transparent;
-            this.labelName2.Location = new System.Drawing.Point(950, 170);
+            this.labelName2.Location = new System.Drawing.Point(800, 140);
             this.labelName2.Text = "Kroki";
             // label with steps
             this.labelSteps1 = new System.Windows.Forms.Label();
             this.labelSteps1.BackColor = System.Drawing.SystemColors.Window;
-            this.labelSteps1.Location = new System.Drawing.Point(950, 200);
+            this.labelSteps1.Location = new System.Drawing.Point(800, 170);
             this.labelSteps1.Width = 60;
             this.labelSteps1.Height = 60;
             this.labelSteps1.TextAlign = ContentAlignment.MiddleCenter;
@@ -80,20 +80,20 @@ namespace plansza1
             // label for name3
             this.labelName3 = new System.Windows.Forms.Label();
             this.labelName3.BackColor = System.Drawing.Color.Transparent;
-            this.labelName3.Location = new System.Drawing.Point(1050, 170);
+            this.labelName3.Location = new System.Drawing.Point(920, 140);
             this.labelName3.Text = "Cel";
             
 
             // label for name4
             this.labelName4 = new System.Windows.Forms.Label();
             this.labelName4.BackColor = System.Drawing.Color.Transparent;
-            this.labelName4.Location = new System.Drawing.Point(1050, 60);
+            this.labelName4.Location = new System.Drawing.Point(920, 30);
             this.labelName4.Text = "Najlepszy wynik";
             // label with Max_points
             // 
             this.labelmax_points = new System.Windows.Forms.Label();
             this.labelmax_points.BackColor = System.Drawing.SystemColors.Window;
-            this.labelmax_points.Location = new System.Drawing.Point(1050, 100);
+            this.labelmax_points.Location = new System.Drawing.Point(920, 60);
             this.labelmax_points.Width = 60;
             this.labelmax_points.Height = 60;
             this.labelmax_points.TextAlign = ContentAlignment.MiddleCenter;
@@ -107,7 +107,7 @@ namespace plansza1
             this.restartbutton.BackColor = Color.White;
             this.restartbutton.UseVisualStyleBackColor = true;
             string filename = "restart_icon.jpg";
-            this.restartbutton.Location = new System.Drawing.Point(950, 500);
+            this.restartbutton.Location = new System.Drawing.Point(800, 500);
             this.restartbutton.BackgroundImage = Image.FromFile(filename);
             this.restartbutton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 
@@ -119,7 +119,7 @@ namespace plansza1
             this.solutionbutton.TabIndex = 0;
             this.solutionbutton.BackColor = Color.White;
             this.solutionbutton.UseVisualStyleBackColor = true;
-            this.solutionbutton.Location = new System.Drawing.Point(950, 300);
+            this.solutionbutton.Location = new System.Drawing.Point(800, 300);
             this.solutionbutton.Font = new Font("Arial", 10);
 
             //backbutton
@@ -130,14 +130,14 @@ namespace plansza1
             this.backbutton.BackColor = Color.White;
             this.backbutton.UseVisualStyleBackColor = true;
             string filename2 = "back_icon.png";
-            this.backbutton.Location = new System.Drawing.Point(950, 400);
+            this.backbutton.Location = new System.Drawing.Point(800, 400);
             this.backbutton.BackgroundImage = Image.FromFile(filename2);
             this.backbutton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 
             //combobox with board selection
             this.boardBox = new System.Windows.Forms.ComboBox();
             this.boardBox.FormattingEnabled = true;
-            this.boardBox.Location = new System.Drawing.Point(950, 650);
+            this.boardBox.Location = new System.Drawing.Point(800, 650);
             this.boardBox.Name = "comboBox1";
             this.boardBox.Size = new System.Drawing.Size(100, 60);
             this.boardBox.Font = new Font("Arial", 12);
@@ -148,7 +148,7 @@ namespace plansza1
             this.max_stepsBox = new System.Windows.Forms.ComboBox();
             this.max_stepsBox.FormattingEnabled = true;
             this.max_stepsBox.Font = new Font("Arial", 16);
-            this.max_stepsBox.Location = new System.Drawing.Point(1050, 200);
+            this.max_stepsBox.Location = new System.Drawing.Point(920, 170);
             this.max_stepsBox.Name = "comboBox1";
             this.max_stepsBox.Size = new System.Drawing.Size(80, 60);
             this.max_stepsBox.TabIndex = 1;
@@ -159,7 +159,7 @@ namespace plansza1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1400, 900);
+            this.ClientSize = new System.Drawing.Size(1100, 800);
             this.Controls.Add(this.tableLayoutPanel1);
 
             this.Controls.Add(this.labelName1);
